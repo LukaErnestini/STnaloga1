@@ -1,6 +1,7 @@
+require('dotenv').config();
+require('./db/mongoose');
 const express = require('express');
 const path = require('path');
-
 const app = express();
 
 // Define paths for express config
@@ -12,6 +13,14 @@ app.use(express.static(publicDirPath));
 // view engine configuration
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../templates/views'));
+
+// Middleware use
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 app.get('/', (req, res) => {
   res.render('todo.ejs');
