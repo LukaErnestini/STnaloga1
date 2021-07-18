@@ -26,6 +26,10 @@ app.use(
   })
 );
 
+// Routers
+app.use(taskRouter);
+app.use(taskListRouter);
+
 app.get('/', (req, res) => {
   res.render('todo.ejs');
 });
