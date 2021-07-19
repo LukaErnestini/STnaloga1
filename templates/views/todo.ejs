@@ -39,8 +39,9 @@
         </form>
         <br />
 
+        <!-- TASK LIST CARD -->
         <% tasklists.forEach(tlist => { %>
-        <div class="shadow-lg p-3 mb-5 bg-white rounded tasklist-card" id="">
+        <div class="shadow-lg p-3 mb-4 bg-white rounded tasklist-card" id="">
           <h2 style="display: inline"><%= tlist.text %></h2>
           <a href="" class="edit" id="">
             <span class="fas fa-edit"> </span>
@@ -48,19 +49,23 @@
           <a href="" class="remove">
             <span class="fas fa-times"> </span>
           </a>
+          <br><br>
 
+          <!-- TASKS -->
           <ul class="tasklist">
             <% tasks.forEach(task => { if (String(task.parentListId) == String(tlist._id)) { %>
             <li class="tasklist-item">
-              <input
+              <!-- CHECKBOX -->
+              <input type="checkbox" name="task" class="task-checkbox" id="<%= task._id %>"
                 <% if (task.completed) { %>
                   checked
-                <% } %>
-                type="checkbox"
-                name="task"
-                id="<%= task._id %>"
+                <% } %>                
               >
-              <label for="<%= task._id %>" class="tasklist-item-name"><%= task.text %></label>
+              <label for="<%= task._id %>" class="tasklist-item-name
+                <% if (task.completed) { %>
+                  task-completed
+                <% } %>
+                "><%= task.text %></label>
               <a href="#" class="edit" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
               </a>
@@ -93,6 +98,16 @@
       method: 'DELETE',
     }).done(() => {
       window.location.reload();
+    });
+  });
+
+  $('.task-checkbox').on('click', function () {
+    var id = this.id;
+    $.ajax({
+      url: '/tasks/' + id + '/togglecomplete',
+      method: 'PATCH',
+    }).done(() => {
+      $('label[for='+this.id+']').toggleClass('task-completed')
     });
   });
 </script>

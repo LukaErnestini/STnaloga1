@@ -38,4 +38,16 @@ router.delete('/tasks/:tid', async (req, res) => {
   }
 });
 
+// Toggle complete state
+router.patch('/tasks/:tid/togglecomplete', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.tid);
+    task.completed = !task.completed;
+    await task.save();
+    res.send(task);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;

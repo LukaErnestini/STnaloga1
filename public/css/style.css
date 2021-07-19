@@ -44,9 +44,6 @@ body {
   font-family: 'Candal', sans-serif;
   background-color: rgb(51, 212, 100);
 }
-.todo-container ul {
-  list-style: none;
-}
 .todo-list-item {
   padding: 10px;
   margin-top: 10px;
@@ -107,4 +104,19 @@ body {
 .remove {
   color: rgb(243, 96, 96);
   margin-right: 5px;
+}
+
+.edit {
+  color: rgb(143, 233, 58);
+  margin-right: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.task-completed {
+  text-decoration: line-through;
+}
+
+.todo-container ul {
+  list-style: none;
 }
