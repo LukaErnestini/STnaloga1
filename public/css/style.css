@@ -103,3 +103,8 @@ body {
   cursor: pointer;
   text-decoration: none;
 } */
+
+.remove {
+  color: rgb(243, 96, 96);
+  margin-right: 5px;
+}

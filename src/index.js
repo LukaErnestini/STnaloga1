@@ -4,6 +4,9 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+//Models
+const Task = require('./models/task');
+
 // Routers
 const taskRouter = require('./routers/task');
 const taskListRouter = require('./routers/taskList');
@@ -30,8 +33,14 @@ app.use(
 app.use(taskRouter);
 app.use(taskListRouter);
 
-app.get('/', (req, res) => {
-  res.render('todo.ejs');
+app.get('/', async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+
+    res.render('todo.ejs', { tasks });
+  } catch (e) {
+    res.status(500).send(e);
+  }
 });
 
 app.listen(3000, () => console.log('Server Up and running'));

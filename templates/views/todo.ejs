@@ -32,16 +32,27 @@
         </form>
         <div class="shadow-lg p-3 mb-5 bg-white rounded">
           <h2 style="display: inline">To-Do List</h2>
-          <a href="" class="edit"><span class="fas fa-edit"></span></a>
-          <a href="" class="remove"><span class="fas fa-times"></span></a>
+          <a href="" class="edit" id="">
+            <span class="fas fa-edit"> </span>
+          </a>
+          <a href="" class="remove">
+            <span class="fas fa-times"> </span>
+          </a>
 
           <ul class="todo-list">
+            <% tasks.forEach(task => { %>
             <li class="todo-list-item">
-              <span class="todo-list-item-name">Some Text</span>
-              <a href="" class="edit"><span class="fas fa-edit"></span></a>
-              <a href="" class="remove"><span class="fas fa-times"></span></a>
+              <span class="todo-list-item-name"><%= task.text %></span>
+              <a href="" class="edit" id="<%= task._id %>"
+                ><span class="fas fa-edit"></span
+              ></a>
+              <a href="/tasks/remove/<%= task._id %>" class="remove"
+                ><span class="fas fa-times"></span
+              ></a>
             </li>
+            <% }) %>
           </ul>
+
           <form action="/tasks" method="POST" class="">
             <input type="text" name="text" />
             <input type="date" id="due" name="dueDate" />
