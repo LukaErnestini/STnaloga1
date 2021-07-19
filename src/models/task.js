@@ -13,6 +13,10 @@ const taskSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
+    parentListId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'TaskList',
+    },
   },
   { timestamps: true }
 );

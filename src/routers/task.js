@@ -4,9 +4,8 @@ const Task = require('../models/task');
 
 // Get all tasks
 router.get('/tasks', async (req, res) => {
-  const tasks = await Task.find({});
-
   try {
+    const tasks = await Task.find({});
     //   res.render('tasks', { tasks, title: 'Tasks' });
     res.send({ tasks });
   } catch (e) {

@@ -23,16 +23,19 @@
   <div class="todo-container">
     <div class="row justify-content-md-center">
       <div class="col-md-auto">
+        <br />
         <form action="/tasklist" method="POST" class="">
-          <input type="hidden" name="text" value="New Task List" />
+          <input type="text" name="text" value="New Task List" />
           <button type="submit">
             <span class="fas fa-plus"></span>
           </button>
           <input type="date" id="due" name="dueDate" />
         </form>
+        <br />
 
-        <div class="shadow-lg p-3 mb-5 bg-white rounded tasklist-card">
-          <h2 style="display: inline">To-Do List</h2>
+        <% tasklists.forEach(tlist => { %>
+        <div class="shadow-lg p-3 mb-5 bg-white rounded tasklist-card" id="">
+          <h2 style="display: inline"><%= tlist.text %></h2>
           <a href="" class="edit" id="">
             <span class="fas fa-edit"> </span>
           </a>
@@ -55,6 +58,7 @@
           </ul>
 
           <form action="/tasks" method="POST" class="">
+            <input type="hidden" name="parentListId" value="<%= tlist._id %>" />
             <input type="text" name="text" />
             <input type="date" id="due" name="dueDate" />
             <button type="submit">
@@ -62,6 +66,7 @@
             </button>
           </form>
         </div>
+        <% }) %>
       </div>
     </div>
   </div>

@@ -6,6 +6,7 @@ const app = express();
 
 //Models
 const Task = require('./models/task');
+const TaskList = require('./models/taskList');
 
 // Routers
 const taskRouter = require('./routers/task');
@@ -36,8 +37,9 @@ app.use(taskListRouter);
 app.get('/', async (req, res) => {
   try {
     const tasks = await Task.find({});
+    const tasklists = await TaskList.find({});
 
-    res.render('todo.ejs', { tasks });
+    res.render('todo.ejs', { tasks, tasklists });
   } catch (e) {
     res.status(500).send(e);
   }
