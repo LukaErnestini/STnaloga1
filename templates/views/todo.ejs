@@ -30,7 +30,8 @@
           </button>
           <input type="date" id="due" name="dueDate" />
         </form>
-        <div class="shadow-lg p-3 mb-5 bg-white rounded">
+
+        <div class="shadow-lg p-3 mb-5 bg-white rounded tasklist-card">
           <h2 style="display: inline">To-Do List</h2>
           <a href="" class="edit" id="">
             <span class="fas fa-edit"> </span>
@@ -39,16 +40,16 @@
             <span class="fas fa-times"> </span>
           </a>
 
-          <ul class="todo-list">
+          <ul class="tasklist">
             <% tasks.forEach(task => { %>
-            <li class="todo-list-item">
-              <span class="todo-list-item-name"><%= task.text %></span>
-              <a href="" class="edit" id="<%= task._id %>"
-                ><span class="fas fa-edit"></span
-              ></a>
-              <a href="/tasks/remove/<%= task._id %>" class="remove"
-                ><span class="fas fa-times"></span
-              ></a>
+            <li class="tasklist-item">
+              <span class="tasklist-item-name"><%= task.text %></span>
+              <a href="" class="edit" id="<%= task._id %>">
+                <span class="fas fa-edit"></span>
+              </a>
+              <a href="/tasks/remove/<%= task._id %>" class="remove">
+                <span class="fas fa-times"></span>
+              </a>
             </li>
             <% }) %>
           </ul>
