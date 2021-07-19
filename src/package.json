@@ -4,8 +4,8 @@
   "description": "made change",
   "main": "index.js",
   "scripts": {
-    "debug": "nodemon --inspect app.js -e hbs,js --watch ../",
-    "dev": "nodemon app.js -e hbs,js --watch ../"
+    "debug": "nodemon --inspect app.js -e ejs,js --watch ../",
+    "dev": "nodemon app.js -e ejs,js --watch ../"
   },
   "repository": {
     "type": "git",
