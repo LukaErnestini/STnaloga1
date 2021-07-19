@@ -44,7 +44,9 @@
           </a>
 
           <ul class="tasklist">
-            <% tasks.forEach(task => { %>
+            <% tasks.forEach(task => { if (String(task.parentListId) ==
+            String(tlist._id)) { %>
+
             <li class="tasklist-item">
               <span class="tasklist-item-name"><%= task.text %></span>
               <a href="" class="edit" id="<%= task._id %>">
@@ -54,7 +56,7 @@
                 <span class="fas fa-times"></span>
               </a>
             </li>
-            <% }) %>
+            <% }}) %>
           </ul>
 
           <form action="/tasks" method="POST" class="">
