@@ -46,7 +46,7 @@
           <a href="" class="edit" id="">
             <span class="fas fa-edit"> </span>
           </a>
-          <a href="" class="remove">
+          <a href="#" class="remove-tasklist" id="<%= tlist._id %>">
             <span class="fas fa-times"> </span>
           </a>
           <br><br>
@@ -69,7 +69,7 @@
               <a href="#" class="edit" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
               </a>
-              <a href="#" class="remove" id="<%= task._id %>">
+              <a href="#" class="remove-task" id="<%= task._id %>">
                 <span class="fas fa-times"></span>
               </a>
             </li>
@@ -91,10 +91,20 @@
   </div>
 </body>
 <script>
-  $('.remove').on('click', function () {
+  $('.remove-task').on('click', function () {
     var id = this.id;
     $.ajax({
       url: '/tasks/' + id,
+      method: 'DELETE',
+    }).done(() => {
+      window.location.reload();
+    });
+  });
+
+  $('.remove-tasklist').on('click', function () {
+    var id = this.id;
+    $.ajax({
+      url: '/tasklist/' + id,
       method: 'DELETE',
     }).done(() => {
       window.location.reload();

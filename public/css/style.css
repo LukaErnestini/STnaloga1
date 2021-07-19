@@ -101,7 +101,8 @@ body {
   text-decoration: none;
 } */
 
-.remove {
+.remove-task,
+.remove-tasklist {
   color: rgb(243, 96, 96);
   margin-right: 5px;
 }
