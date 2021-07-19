@@ -24,4 +24,18 @@ router.post('/tasks', async (req, res) => {
   }
 });
 
+// Remove task
+router.delete('/tasks/:tid', async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.tid,
+    });
+    if (!task) return res.status(404).send();
+
+    res.send(task);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;
