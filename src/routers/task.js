@@ -50,4 +50,17 @@ router.patch('/tasks/:tid/togglecomplete', async (req, res) => {
   }
 });
 
+// Edit task
+router.put('/tasks/:tid', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.tid);
+    task.text = req.query.newText;
+    //task.dueDate = req.query.newDueDate;
+    await task.save();
+    res.send(task);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;

@@ -61,12 +61,15 @@
                   checked
                 <% } %>                
               >
-              <label for="<%= task._id %>" class="tasklist-item-name
+              <label for="<%= task._id %>" id="label-<%= task._id %>" style="display:inline" class="tasklist-item-name
                 <% if (task.completed) { %>
                   task-completed
                 <% } %>
                 "><%= task.text %></label>
-              <a href="#" class="edit" id="<%= task._id %>">
+
+              <input type="hidden" class="editbox" id="input-<%= task._id %>" value="<%= task.text %>">
+              
+              <a href="#" class="edit-task" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
               </a>
               <a href="#" class="remove-task" id="<%= task._id %>">
@@ -91,6 +94,21 @@
   </div>
 </body>
 <script>
+  function edit(id) {
+    var label = document.getElementById('label-' + id)
+    var input = document.getElementById('input-' + id)
+
+    if (input.type === "hidden")
+      input.type = "text";      
+    else
+      input.type = "hidden";
+
+    if (label.style.display === "none") 
+      label.style.display = "inline";
+    else 
+      label.style.display = "none";
+  }
+
   $('.remove-task').on('click', function () {
     var id = this.id;
     $.ajax({
@@ -99,6 +117,24 @@
     }).done(() => {
       window.location.reload();
     });
+  });
+
+  $('.edit-task').on('click', function () {
+    var id = this.id;
+    edit(id);
+  });
+
+  $('.editbox').keypress(function (e) {
+    var id = this.id.substring(6);
+    console.log("substring je: "+id)
+    if (e.which == 13) {
+      $.ajax({
+        url: '/tasks/' + id + '?newText=' + this.value,
+        method: 'PUT',
+      }).done(() => {
+        window.location.reload();
+      });
+    }
   });
 
   $('.remove-tasklist').on('click', function () {
