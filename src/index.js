@@ -39,6 +39,9 @@ app.get('/', async (req, res) => {
     const tasks = await Task.find({});
     const tasklists = await TaskList.find({});
 
+    var test = new Date(tasks[0].dueDate);
+    console.log('task 0 duedate: ' + test.toISOString().substr(0, 10));
+
     res.render('todo.ejs', { tasks, tasklists });
   } catch (e) {
     res.status(500).send(e);

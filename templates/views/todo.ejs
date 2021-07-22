@@ -61,14 +61,15 @@
                   checked
                 <% } %>                
               >
+
               <label for="<%= task._id %>" id="label-<%= task._id %>" style="display:inline" class="tasklist-item-name
                 <% if (task.completed) { %>
                   task-completed
                 <% } %>
                 "><%= task.text %></label>
-
               <input type="hidden" class="editbox" id="input-<%= task._id %>" value="<%= task.text %>">
-              
+              <input type="hidden" id="editdate-<%= task._id %>" class="newDueDate" value="<%= new Date(task.dueDate).toISOString().substr(0, 10) %>" />
+
               <a href="#" class="edit-task" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
               </a>
@@ -97,11 +98,17 @@
   function edit(id) {
     var label = document.getElementById('label-' + id)
     var input = document.getElementById('input-' + id)
+    var date = document.getElementById('editdate-' + id)
 
     if (input.type === "hidden")
       input.type = "text";      
     else
       input.type = "hidden";
+
+    if (date.type === "hidden")
+      date.type = "date";      
+    else
+      date.type = "hidden";
 
     if (label.style.display === "none") 
       label.style.display = "inline";
@@ -125,11 +132,11 @@
   });
 
   $('.editbox').keypress(function (e) {
-    var id = this.id.substring(6);
-    console.log("substring je: "+id)
+    var id = this.id.substring(6); // odrezemo del ki ni id na zacetku
+    var date = document.getElementById('editdate-' + id)
     if (e.which == 13) {
       $.ajax({
-        url: '/tasks/' + id + '?newText=' + this.value,
+        url: '/tasks/' + id + '?newText=' + this.value + '&newDueDate=' + date.value,
         method: 'PUT',
       }).done(() => {
         window.location.reload();
