@@ -27,6 +27,10 @@
 </head>
 <body>
   <div class="todo-container">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="switchEditMode">
+      <label class="form-check-label" for="switchEditMode">Edit Mode</label>
+    </div>
     <div class="row justify-content-md-center">
       <div class="col-md-auto">
         <br />
@@ -44,13 +48,17 @@
         <% tasklists.forEach(tlist => { %>
         <div class="shadow-lg p-3 mb-4 bg-white rounded tasklist-card" id="">
           <h2 style="display: inline"><%= tlist.text %></h2>
-          <a href="" class="edit" id="">
+          <a href="" class="edit editmode hideme" id="">
             <span class="fas fa-edit"> </span>
           </a>
-          <a href="#" class="remove-tasklist" id="<%= tlist._id %>">
+          <a href="#" class="remove-tasklist editmode hideme" id="<%= tlist._id %>">
             <span class="fas fa-times"> </span>
           </a>
-          <br><br>
+          <div class="reminderSet-div" style="display: block;">
+            <label for="reminder" class="hideme editmode">Reminder (days): </label>
+            <input type="text" class="hideme editmode" name="reminderDays" id="<%= tlist._id %>" value="2" size="2">
+          </div>
+          <br>
 
           <!-- TASKS -->
           <ul class="tasklist">
@@ -75,10 +83,10 @@
               <input type="hidden" class="editbox" id="input-<%= task._id %>" value="<%= task.text %>">
               <input type="hidden" id="editdate-<%= task._id %>" class="newDueDate" value="<%= new Date(task.dueDate).toISOString().substr(0, 10) %>" />
 
-              <a href="#" class="edit-task" id="<%= task._id %>">
+              <a href="#" class="edit-task editmode hideme" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
               </a>
-              <a href="#" class="remove-task" id="<%= task._id %>">
+              <a href="#" class="remove-task editmode hideme" id="<%= task._id %>">
                 <span class="fas fa-times"></span>
               </a>
             </li>
@@ -87,7 +95,7 @@
 
           <form action="/tasks" method="POST" class="">
             <input type="hidden" name="parentListId" value="<%= tlist._id %>" />
-            <input type="text" name="text" />
+            <input type="text" name="text" placeholder="New Task Description ..." />
             <input type="date" id="due" name="dueDate" class="datePick"/>
             <button type="submit">
               <span class="fas fa-plus"></span>
@@ -100,6 +108,26 @@
   </div>
 </body>
 <script>
+  const getCookieValue = (name) => (
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+  )
+
+  window.onbeforeunload = function(event) {
+    if ($('#switchEditMode').prop('checked'))
+      document.cookie = 'editMode=true;secure'
+    else
+      document.cookie = 'editMode=false;secure'
+  };
+  
+  $(document).ready(function() {    
+    if (getCookieValue('editMode') === 'true') {
+      $('#switchEditMode').prop('checked', true)
+      $('.editmode').toggleClass('hideme')  
+    }
+    else
+      $('#switchEditMode').prop('checked', false)
+  });
+
   function edit(id) {
     var label = document.getElementById('label-' + id)
     var input = document.getElementById('input-' + id)
@@ -175,5 +203,9 @@
     }).done(() => {
       $('label[for='+this.id+']').toggleClass('task-completed')
     });
+  });
+
+  $('#switchEditMode').on('click', function () {
+    $('.editmode').toggleClass('hideme')    
   });
 </script>

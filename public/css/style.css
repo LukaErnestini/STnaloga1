@@ -126,3 +126,7 @@ body {
 .task-is-due {
   color: red;
 }
+
+.hideme {
+  display: none;
+}
