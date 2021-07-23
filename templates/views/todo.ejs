@@ -47,16 +47,20 @@
         <!-- TASK LIST CARD -->
         <% tasklists.forEach(tlist => { %>
         <div class="shadow-lg p-3 mb-4 bg-white rounded tasklist-card" id="">
-          <h2 style="display: inline"><%= tlist.text %></h2>
-          <a href="" class="edit editmode hideme" id="">
+          <h2 style="display: inline" id="label-<%= tlist._id %>"><%= tlist.text %></h2>
+
+          <input type="hidden" class="list-editbox list-edit-submit" id="input-<%= tlist._id %>" value="<%= tlist.text %>">
+          <input type="hidden" id="editdate-<%= tlist._id %>" class="newDueDate" value="<%= new Date(tlist.dueDate).toISOString().substr(0, 10) %>" />
+          
+          <a href="#" class="edit editmode hideme edit-tasklist" id="<%= tlist._id %>">
             <span class="fas fa-edit"> </span>
           </a>
           <a href="#" class="remove-tasklist editmode hideme" id="<%= tlist._id %>">
             <span class="fas fa-times"> </span>
           </a>
           <div class="reminderSet-div" style="display: block;">
-            <label for="reminder" class="hideme editmode">Reminder (days): </label>
-            <input type="text" class="hideme editmode" name="reminderDays" id="<%= tlist._id %>" value="2" size="2">
+            <label for="reminder" class="hideme reminder-<%= tlist._id %>">Reminder (days): </label>
+            <input type="text" class="hideme reminder-edit list-edit-submit reminder-<%= tlist._id %>" name="reminderDays" id="remin-<%= tlist._id %>" value="<%= tlist.reminder %>"  size="2">
           </div>
           <br>
 
@@ -71,12 +75,12 @@
                 <% } %>                
               >
 
-              <!-- ce je duedate blizje kot 2 dni se obarva rdece -->
+              <!-- ce je dueDate blizje kot 2 dni se obarva rdece -->
               <label for="<%= task._id %>" id="label-<%= task._id %>" style="display:inline;"                
               class="tasklist-item-name
                 <% if (task.completed) { %>
                   task-completed
-                <% } else if ((new Date(task.dueDate).getTime()) - (new Date().getTime()) < (1000*60*60*24*2)) { %>
+                <% } else if ((new Date(task.dueDate).getTime()) - (new Date().getTime()) < (1000*60*60*24*tlist.reminder)) { %>
                   task-is-due
                 <% } %>
                 "><%= task.text %></label>
@@ -128,7 +132,25 @@
       $('#switchEditMode').prop('checked', false)
   });
 
-  function edit(id) {
+  Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+  });
+
+  $('.datePick').val(new Date().toDateInputValue());
+
+  $('.remove-task').on('click', function () {
+    var id = this.id;
+    $.ajax({
+      url: '/tasks/' + id,
+      method: 'DELETE',
+    }).done(() => {
+      window.location.reload();
+    });
+  });
+
+  function edittask(id) {
     var label = document.getElementById('label-' + id)
     var input = document.getElementById('input-' + id)
     var date = document.getElementById('editdate-' + id)
@@ -149,35 +171,58 @@
       label.style.display = "none";
   }
 
-  Date.prototype.toDateInputValue = (function() {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
-  });
-
-  $('.datePick').val(new Date().toDateInputValue());
-
-  $('.remove-task').on('click', function () {
-    var id = this.id;
-    $.ajax({
-      url: '/tasks/' + id,
-      method: 'DELETE',
-    }).done(() => {
-      window.location.reload();
-    });
-  });
-
   $('.edit-task').on('click', function () {
     var id = this.id;
-    edit(id);
+    edittask(id);
   });
 
+  // submit change of task
   $('.editbox').keypress(function (e) {
     var id = this.id.substring(6); // odrezemo del ki ni id na zacetku
     var date = document.getElementById('editdate-' + id)
     if (e.which == 13) {
       $.ajax({
         url: '/tasks/' + id + '?newText=' + this.value + '&newDueDate=' + date.value,
+        method: 'PUT',
+      }).done(() => {
+        window.location.reload();
+      });
+    }
+  });
+
+  $('.edit-tasklist').on('click', function () {
+    var id = this.id;
+    var label = document.getElementById('label-' + id) // h2 actually, not label
+    var input = document.getElementById('input-' + id)
+    var date = document.getElementById('editdate-' + id)
+
+    $('.reminder-' + id).toggleClass('hideme')
+
+    if (input.type === "hidden")
+      input.type = "text";      
+    else
+      input.type = "hidden";
+
+    if (date.type === "hidden")
+      date.type = "date";      
+    else
+      date.type = "hidden";
+
+    if (label.style.display === "none") 
+      label.style.display = "inline";
+    else 
+      label.style.display = "none";
+  });
+
+  // submit change of tasklist
+  $('.list-edit-submit').keypress(function (e) {
+    var id = this.id.substring(6); // odrezemo del ki ni id na zacetku
+    var text = document.getElementById('input-' + id)
+    var reminder = document.getElementById('remin-' + id)
+    var date = document.getElementById('editdate-' + id)
+    if (e.which == 13) {
+      $.ajax({
+        url: '/tasklist/' + id + '?newText=' + text.value + '&newDueDate=' + date.value + '&newReminder=' + reminder.value,
         method: 'PUT',
       }).done(() => {
         window.location.reload();

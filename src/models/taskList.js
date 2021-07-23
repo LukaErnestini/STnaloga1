@@ -13,6 +13,11 @@ const taskListSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
+    reminder: {
+      // how many days before dueDate to remind
+      type: Number,
+      default: 2,
+    },
     tags: [
       {
         tag: {

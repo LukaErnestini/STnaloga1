@@ -41,4 +41,18 @@ router.delete('/tasklist/:tid', async (req, res) => {
   }
 });
 
+// Edit task list
+router.put('/tasklist/:tid', async (req, res) => {
+  try {
+    const tasklist = await TaskList.findById(req.params.tid);
+    tasklist.text = req.query.newText;
+    tasklist.dueDate = req.query.newDueDate;
+    tasklist.reminder = req.query.newReminder;
+    await tasklist.save();
+    res.send(tasklist);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;
