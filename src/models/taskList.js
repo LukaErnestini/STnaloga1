@@ -13,6 +13,15 @@ const taskListSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
+    tags: [
+      {
+        tag: {
+          type: String,
+          trim: true,
+          maxlength: 16,
+        },
+      },
+    ],
     tasks: [
       {
         taskId: {
