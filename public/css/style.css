@@ -107,7 +107,8 @@ body {
   margin-right: 5px;
 }
 
-.edit {
+.edit,
+.edit-task {
   color: rgb(143, 233, 58);
   margin-right: 5px;
   cursor: pointer;
