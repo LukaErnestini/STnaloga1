@@ -13,6 +13,15 @@ const taskSchema = new mongoose.Schema(
     dueDate: {
       type: Date,
     },
+    tags: [
+      {
+        tag: {
+          type: String,
+          trim: true,
+          maxlength: 16,
+        },
+      },
+    ],
     parentListId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'TaskList',
