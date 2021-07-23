@@ -122,3 +122,7 @@ body {
 .todo-container ul {
   list-style: none;
 }
+
+.task-is-due {
+  color: red;
+}

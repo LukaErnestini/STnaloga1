@@ -63,9 +63,13 @@
                 <% } %>                
               >
 
-              <label for="<%= task._id %>" id="label-<%= task._id %>" style="display:inline" class="tasklist-item-name
+              <!-- ce je duedate blizje kot 2 dni se obarva rdece -->
+              <label for="<%= task._id %>" id="label-<%= task._id %>" style="display:inline;"                
+              class="tasklist-item-name
                 <% if (task.completed) { %>
                   task-completed
+                <% } else if ((new Date(task.dueDate).getTime()) - (new Date().getTime()) < (1000*60*60*24*2)) { %>
+                  task-is-due
                 <% } %>
                 "><%= task.text %></label>
               <input type="hidden" class="editbox" id="input-<%= task._id %>" value="<%= task.text %>">
