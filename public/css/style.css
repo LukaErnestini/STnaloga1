@@ -134,3 +134,7 @@ body {
 .task-tags {
   display: inline;
 }
+
+span.bg-danger {
+  cursor: pointer;
+}

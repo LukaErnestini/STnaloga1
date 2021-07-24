@@ -69,6 +69,19 @@ router.patch('/tasks/:tid/tags', async (req, res) => {
     const task = await Task.findById(req.params.tid);
     task.tags.push({ tag: req.query.newTag });
     await task.save();
+    res.send(task.tags.slice(-1)[0]._id);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send();
+  }
+});
+
+// Remove tag
+router.delete('/tasks/:tid/tags', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.tid);
+    task.tags.pull({ _id: req.query.tagid });
+    await task.save();
     res.send(task);
   } catch (e) {
     res.status(500).send();

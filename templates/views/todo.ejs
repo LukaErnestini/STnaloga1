@@ -88,7 +88,7 @@
               <input type="hidden" id="editdate-<%= task._id %>" class="newDueDate" value="<%= new Date(task.dueDate).toISOString().substr(0, 10) %>" />
               <div id="task-tags-<%= task._id %>" class="task-tags">
                 <% task.tags.forEach(tag => { %>
-                  <span class="badge bg-secondary badge-editmode"><%= tag.tag %> </span>  
+                  <span id="<%= tag._id %>" class="badge bg-secondary badge-editmode"><%= tag.tag %> </span>  
                 <% }); %>
               </div>
               <a href="#" class="editmode hideme add-tag" id="<%= task._id %>"><span class="badge bg-primary">+</span></a>
@@ -134,6 +134,8 @@
     if (getCookieValue('editMode') === 'true') {
       $('#switchEditMode').prop('checked', true)
       $('.editmode').toggleClass('hideme')  
+      $('.badge-editmode').toggleClass('bg-secondary bg-danger');
+      removeTagEvent();
     }
     else
       $('#switchEditMode').prop('checked', false)
@@ -263,12 +265,13 @@
         $.ajax({
           url: '/tasks/' + this.id + '/tags?newTag=' + this.value,
           method: 'PATCH',
-        }).done(() => {
+        }).done((tagid) => {
           parentSpan = this.parentNode;
           parentSpan.innerHTML = '';
-          tag = document.createTextNode(this.value)
-          parentSpan.append(tag)
-          parentSpan.classList.replace('bg-primary', 'bg-secondary')
+          tag = document.createTextNode(this.value);
+          parentSpan.append(tag);
+          parentSpan.classList.replace('bg-primary', 'bg-danger');
+          parentSpan.id = tagid;
         });
       }
       if (e.key === 'Escape') {
@@ -276,8 +279,6 @@
       }
     });
   });
-
-
 
   $('.task-checkbox').on('click', function () {
     var id = this.id;
@@ -290,6 +291,21 @@
   });
 
   $('#switchEditMode').on('click', function () {
-    $('.editmode').toggleClass('hideme')    
+    $('.editmode').toggleClass('hideme');
+    $('.badge-editmode').toggleClass('bg-primary bg-danger');
+    removeTagEvent();
   });
+  
+  function removeTagEvent() {    
+    $('span.bg-danger').on('click', function () {
+      parentDiv = this.parentNode;
+      taskID = parentDiv.id.substring(10);
+      $.ajax({
+          url: '/tasks/' + taskID + '/tags?tagid=' + this.id,
+          method: 'DELETE',
+        }).done(() => {
+          this.remove()
+        });
+    })
+  }
 </script>
