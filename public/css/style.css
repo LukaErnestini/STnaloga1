@@ -130,3 +130,7 @@ body {
 .hideme {
   display: none;
 }
+
+.task-tags {
+  display: inline;
+}

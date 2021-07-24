@@ -86,6 +86,13 @@
                 "><%= task.text %></label>
               <input type="hidden" class="editbox" id="input-<%= task._id %>" value="<%= task.text %>">
               <input type="hidden" id="editdate-<%= task._id %>" class="newDueDate" value="<%= new Date(task.dueDate).toISOString().substr(0, 10) %>" />
+              <div id="task-tags-<%= task._id %>" class="task-tags">
+                <% task.tags.forEach(tag => { %>
+                  <span class="badge bg-secondary badge-editmode"><%= tag.tag %> </span>  
+                <% }); %>
+              </div>
+              <a href="#" class="editmode hideme add-tag" id="<%= task._id %>"><span class="badge bg-primary">+</span></a>
+
 
               <a href="#" class="edit-task editmode hideme" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
@@ -239,6 +246,38 @@
       window.location.reload();
     });
   });
+
+  $('.add-tag').on('click', function () {
+    var id = this.id;
+    var newTag = document.createElement('span');
+    newTag.classList.add('badge', 'bg-primary', 'badge-editmode');
+    var newInput = document.createElement('input');
+    newInput.classList.add('new-tag-input');
+    newInput.id = id;
+    newInput.setAttribute('size', 8);
+    newTag.append(newInput);
+    $('#task-tags-' + id).append(newTag);
+
+    $('.new-tag-input').keypress(function (e) {
+      if (e.which == 13 && this.value != '') {
+        $.ajax({
+          url: '/tasks/' + this.id + '/tags?newTag=' + this.value,
+          method: 'PATCH',
+        }).done(() => {
+          parentSpan = this.parentNode;
+          parentSpan.innerHTML = '';
+          tag = document.createTextNode(this.value)
+          parentSpan.append(tag)
+          parentSpan.classList.replace('bg-primary', 'bg-secondary')
+        });
+      }
+      if (e.key === 'Escape') {
+        console.log('escaped');
+      }
+    });
+  });
+
+
 
   $('.task-checkbox').on('click', function () {
     var id = this.id;
