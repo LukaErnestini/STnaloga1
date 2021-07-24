@@ -52,6 +52,14 @@
           <input type="hidden" class="list-editbox list-edit-submit" id="input-<%= tlist._id %>" value="<%= tlist.text %>">
           <input type="hidden" id="editdate-<%= tlist._id %>" class="newDueDate" value="<%= new Date(tlist.dueDate).toISOString().substr(0, 10) %>" />
           
+          <!-- tags -->
+          <div id="tasklist-tags-<%= tlist._id %>" class="tasklist-tags">
+            <% tlist.tags.forEach(tag => { %>
+              <span id="<%= tag._id %>" class="badge bg-secondary badge-editmode list-badge"><%= tag.tag %> </span>  
+            <% }); %>
+          </div>
+          <a href="#" class="editmode hideme add-tag-tlist" id="<%= tlist._id %>"><span class="badge bg-primary">+</span></a>
+
           <a href="#" class="edit editmode hideme edit-tasklist" id="<%= tlist._id %>">
             <span class="fas fa-edit"> </span>
           </a>
@@ -86,13 +94,14 @@
                 "><%= task.text %></label>
               <input type="hidden" class="editbox" id="input-<%= task._id %>" value="<%= task.text %>">
               <input type="hidden" id="editdate-<%= task._id %>" class="newDueDate" value="<%= new Date(task.dueDate).toISOString().substr(0, 10) %>" />
+              
+              <!-- tags -->
               <div id="task-tags-<%= task._id %>" class="task-tags">
                 <% task.tags.forEach(tag => { %>
-                  <span id="<%= tag._id %>" class="badge bg-secondary badge-editmode"><%= tag.tag %> </span>  
+                  <span id="<%= tag._id %>" class="badge bg-secondary badge-editmode task-badge"><%= tag.tag %> </span>  
                 <% }); %>
               </div>
               <a href="#" class="editmode hideme add-tag" id="<%= task._id %>"><span class="badge bg-primary">+</span></a>
-
 
               <a href="#" class="edit-task editmode hideme" id="<%= task._id %>">
                 <span class="fas fa-edit"></span>
@@ -252,7 +261,7 @@
   $('.add-tag').on('click', function () {
     var id = this.id;
     var newTag = document.createElement('span');
-    newTag.classList.add('badge', 'bg-primary', 'badge-editmode');
+    newTag.classList.add('badge', 'bg-secondary', 'badge-editmode', 'task-badge');
     var newInput = document.createElement('input');
     newInput.classList.add('new-tag-input');
     newInput.id = id;
@@ -263,15 +272,50 @@
     $('.new-tag-input').keypress(function (e) {
       if (e.which == 13 && this.value != '') {
         $.ajax({
-          url: '/tasks/' + this.id + '/tags?newTag=' + this.value,
+          url: '/tasks/' + this.id + '/tags',
           method: 'PATCH',
+          data: { tag: this.value},
         }).done((tagid) => {
           parentSpan = this.parentNode;
           parentSpan.innerHTML = '';
           tag = document.createTextNode(this.value);
           parentSpan.append(tag);
-          parentSpan.classList.replace('bg-primary', 'bg-danger');
+          parentSpan.classList.replace('bg-secondary', 'bg-danger');
           parentSpan.id = tagid;
+          removeTagEvent()
+        });
+      }
+      if (e.key === 'Escape') {
+        console.log('escaped');
+      }
+    });
+  });
+
+  $('.add-tag-tlist').on('click', function () {
+    var id = this.id;
+    var newTag = document.createElement('span');
+    newTag.classList.add('badge', 'bg-secondary', 'badge-editmode', 'list-badge');
+    var newInput = document.createElement('input');
+    newInput.classList.add('new-tag-input');
+    newInput.id = id;
+    newInput.setAttribute('size', 8);
+    newTag.append(newInput);
+    $('#tasklist-tags-' + id).append(newTag);
+
+    $('.new-tag-input').keypress(function (e) {
+      if (e.which == 13 && this.value != '') {
+        $.ajax({
+          url: '/tasklist/' + this.id + '/tags',
+          method: 'PATCH',
+          data: { tag: this.value},
+        }).done((tagid) => {
+          parentSpan = this.parentNode;
+          parentSpan.innerHTML = '';
+          tag = document.createTextNode(this.value);
+          parentSpan.append(tag);
+          parentSpan.classList.replace('bg-secondary', 'bg-danger');
+          parentSpan.id = tagid;
+          removeTagEvent()
         });
       }
       if (e.key === 'Escape') {
@@ -292,16 +336,27 @@
 
   $('#switchEditMode').on('click', function () {
     $('.editmode').toggleClass('hideme');
-    $('.badge-editmode').toggleClass('bg-primary bg-danger');
+    $('.badge-editmode').toggleClass('bg-secondary bg-danger');
     removeTagEvent();
   });
-  
+
   function removeTagEvent() {    
-    $('span.bg-danger').on('click', function () {
+    $('span.bg-danger.task-badge').on('click', function () {
       parentDiv = this.parentNode;
       taskID = parentDiv.id.substring(10);
       $.ajax({
           url: '/tasks/' + taskID + '/tags?tagid=' + this.id,
+          method: 'DELETE',
+        }).done(() => {
+          this.remove()
+        });
+    })
+
+    $('span.bg-danger.list-badge').on('click', function () {
+      parentDiv = this.parentNode;
+      taskID = parentDiv.id.substring(14);
+      $.ajax({
+          url: '/tasklist/' + taskID + '/tags?tagid=' + this.id,
           method: 'DELETE',
         }).done(() => {
           this.remove()

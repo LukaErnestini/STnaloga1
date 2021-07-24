@@ -55,4 +55,29 @@ router.put('/tasklist/:tid', async (req, res) => {
   }
 });
 
+// Add tag
+router.patch('/tasklist/:tlid/tags', async (req, res) => {
+  try {
+    const tasklist = await TaskList.findById(req.params.tlid);
+    tasklist.tags.push({ tag: req.body.tag });
+    await tasklist.save();
+    res.send(tasklist.tags.slice(-1)[0]._id);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send();
+  }
+});
+
+// Remove tag
+router.delete('/tasklist/:tlid/tags', async (req, res) => {
+  try {
+    const tasklist = await TaskList.findById(req.params.tlid);
+    tasklist.tags.pull({ _id: req.query.tagid });
+    await tasklist.save();
+    res.send(tasklist);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 module.exports = router;

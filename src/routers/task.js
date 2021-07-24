@@ -66,8 +66,10 @@ router.put('/tasks/:tid', async (req, res) => {
 // Add tag
 router.patch('/tasks/:tid/tags', async (req, res) => {
   try {
+    console.log(req.body.tag);
     const task = await Task.findById(req.params.tid);
-    task.tags.push({ tag: req.query.newTag });
+    console.log(req.body.tag);
+    task.tags.push({ tag: req.body.tag });
     await task.save();
     res.send(task.tags.slice(-1)[0]._id);
   } catch (e) {

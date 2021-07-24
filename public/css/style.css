@@ -131,7 +131,8 @@ body {
   display: none;
 }
 
-.task-tags {
+.task-tags,
+.tasklist-tags {
   display: inline;
 }
 
